@@ -1,0 +1,33 @@
+@keyframes flotter {
+    0%   { transform: translateY(0); }
+    50%  { transform: translateY(-15px); }
+    100% { transform: translateY(0); }
+}
+
+@keyframes colorChange {
+    0%   { background-color:blue; color: aliceblue; }
+    100% { background-color:black; color: aliceblue; }
+}
+
+.inscription-btn{
+    animation: colorChange 1s infinite alternate;
+}
+.image-anim {
+    width: 120px;
+    animation: flotter 2s infinite ease-in-out;
+}
+
+.inscription-btn a {
+    text-decoration: none;
+    color: #e3f2fd;
+}
+
+.inscription-btn a:hover {
+  background-color: blue;
+}
+.inscription-btn {
+    transition: background-color 1s ease;
+}
+.inscription-btn a:hover {
+    color: white;
+} 
