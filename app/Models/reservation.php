@@ -9,7 +9,7 @@ class Reservation extends Model
     protected $fillable = [
         'nom',
         'email',
-        'cin',
+        'np',
         'telephone',
         'date',
         'heure_debut',

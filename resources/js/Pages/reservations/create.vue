@@ -1,151 +1,165 @@
 <template>
   <Navbar />
 
-  <div class="container" style="margin-top:5%;">
-    <h1 style="margin-left:30%; color:blue;">Fiche de Résèrvation</h1>
+  <div class="container mt-5">
+    <h2 class="text-center text-primary">Fiche de Réservation</h2>
 
-    <form @submit.prevent="submit" class="reservation-form row g-3 p-1 rounded">
+    <!-- PROGRESS -->
+    <div class="steps mb-4">
+      <span v-for="n in 4" :key="n" :class="['step', { active: step >= n }]">
+        {{ n }}
+      </span>
+    </div>
 
-      <div class="col-md-12 mb-3">
-        <label>Nom</label>
-        <input v-model="form.nom" class="form-control" />
-        <div v-if="form.errors.nom" class="text-danger">
-          {{ form.errors.nom }}
+    <form @submit.prevent="submit" class="reservation-form row g-3">
+
+      <!-- STEP 1 -->
+      <template v-if="step === 1">
+        <div class="col-md-6">
+          <label>Nom</label>
+          <input v-model="form.nom" class="form-control" />
         </div>
-      </div>
 
-      <div class="col-md-6 mb-3">
-        <label>Email</label>
-        <input v-model="form.email" type="email" class="form-control" />
-        <div v-if="form.errors.email" class="text-danger">
-          {{ form.errors.email }}
+        <div class="col-md-6">
+          <label>Email</label>
+          <input v-model="form.email" type="email" class="form-control" />
         </div>
-      </div>
+      </template>
 
-      <div class="col-md-6 mb-3">
-        <label>CIN</label>
-        <input v-model="form.cin" class="form-control" />
-        <div v-if="form.errors.cin" class="text-danger">
-          {{ form.errors.cin }}
+      <!-- STEP 2 -->
+      <template v-if="step === 2">
+      <div class="col-md-6">
+          <label>Téléphone</label>
+          <input v-model="form.telephone" class="form-control" />
         </div>
-      </div>
-
-    
-      <div class="col-md-12 mb-3">
-        <label>Téléphone</label>
-        <input v-model="form.telephone" class="form-control" />
-        <div v-if="form.errors.telephone" class="text-danger">
-          {{ form.errors.telephone }}
+        <div class="col-md-6">
+          <label>Nombre des Personne:</label>
+          <input v-model="form.np" class="form-control" />
         </div>
-      </div>
 
-      <div class="col-md-12 mb-3">
-        <label>Événement</label>
-        <select v-model="form.type_evenement" class="form-select">
-          <option disabled value="">Choisir...</option>
-          <option value="MARIAGE">MARIAGE</option>
-          <option value="FIANCAILLE">FIANCAILLE</option>
-          <option value="ANNIVERSAIRE">ANNIVERSAIRE</option>
-          <option value="BAPTEME">BAPTEME</option>
-          <option value="REUNION">REUNION</option>
-          <option value="FETE PRIVEE">FETE PRIVEE</option>
-        </select>
-        <div v-if="form.errors.type_evenement" class="text-danger">
-          {{ form.errors.type_evenement }}
+        
+      </template>
+
+      <!-- STEP 3 -->
+      <template v-if="step === 3">
+        <div class="col-md-6">
+          <label>Événement</label>
+          <select v-model="form.type_evenement" class="form-select">
+            <option disabled value="">Choisir...</option>
+            <option>MARIAGE</option>
+            <option>FIANCAILLE</option>
+            <option>ANNIVERSAIRE</option>
+            <option>BAPTEME</option>
+          </select>
         </div>
-      </div>
 
-    
-      <div class="col-md-4 mb-3">
-        <label>Date</label>
-        <input v-model="form.date" type="date" class="form-control" />
-        <div v-if="form.errors.date" class="text-danger">
-          {{ form.errors.date }}
+        <div class="col-md-6">
+          <label>Date</label>
+          <input v-model="form.date" type="date" class="form-control" />
         </div>
-      </div>
+      </template>
 
-     
-      <div class="col-md-4 mb-3">
-        <label>Heure Début</label>
-        <input v-model="form.heure_debut" type="time" class="form-control" />
-        <div v-if="form.errors.heure_debut" class="text-danger">
-          {{ form.errors.heure_debut }}
+      <!-- STEP 4 -->
+      <template v-if="step === 4">
+        <div class="col-md-6">
+          <label>Heure Début</label>
+          <input v-model="form.heure_debut" type="time" class="form-control" />
         </div>
-      </div>
 
-      <div class="col-md-4 mb-3">
-        <label>Heure Fin</label>
-        <input v-model="form.heure_fin" type="time" class="form-control" />
-        <div v-if="form.errors.heure_fin" class="text-danger">
-          {{ form.errors.heure_fin }}
+        <div class="col-md-6">
+          <label>Heure Fin</label>
+          <input v-model="form.heure_fin" type="time" class="form-control" />
         </div>
-      </div>
+      </template>
 
-      <div class="col-md-12">
-        <button class="btn btn-primary w-50" style="margin-left:20%;" :disabled="form.processing">
-            Résérver
+      <!-- BUTTONS -->
+      <div class="col-12 d-flex justify-content-between mt-4">
+        <button
+          type="button"
+          class="btn btn-secondary"
+          v-if="step > 1"
+          @click="step--"
+        >
+          Précédent
+        </button>
+
+        <button
+          type="button"
+          class="btn btn-primary ms-auto"
+          v-if="step < 4"
+          @click="step++"
+        >
+          Suivant
+        </button>
+
+        <button
+          v-if="step === 4"
+          class="btn btn-success ms-auto"
+          :disabled="form.processing"
+        >
+          Réserver
         </button>
       </div>
 
     </form>
   </div>
 </template>
-
 <script setup>
+import { ref } from 'vue'
 import { useForm } from '@inertiajs/vue3'
 import Navbar from "../../Components/Navbar.vue";
 
-const props = defineProps({
-  reservation: Object,
-  inscription: Object
-})
-
+const step = ref(1)
 
 const form = useForm({
-  nom: props.user.nom || props.inscription?.nom || '',
-  email: props.user.email || props.inscription?.email || '',
-  cin: props.user.cin || props.inscription?.cin || '',
-  telephone: props.user.telephone || props.inscription?.telephone || '',
-  date: props.reservation?.date || '',
-  heure_debut: props.reservation?.heure_debut || '',
-  heure_fin: props.reservation?.heure_fin || '',
-  type_evenement: props.reservation?.type_evenement || ''
+  nom: '',
+  email: '',
+  np: '',
+  telephone: '',
+  type_evenement: '',
+  date: '',
+  heure_debut: '',
+  heure_fin: ''
 })
 
-
 function submit() {
-  if (props.reservation) {
-    form.put(`/reservations/${props.reservation.id}`, {
-      onSuccess: () => {
-        alert('Réservation mise à jour avec succès !');
-      },
-      onError: () => {
-        alert('Erreur lors de la mise à jour.');
-      }
-    })
-  } else {
-    form.post('/reservations', {
-      onSuccess: () => {
-        alert('Réservation envoyée avec succès !');
-        form.reset(); 
-      },
-      onError: () => {
-        alert('Erreur lors de l\'envoi de la réservation.');
-      }
-    })
-  }
+  form.post('/reservations', {
+    onSuccess: () => {
+      alert('Réservation envoyée avec succès')
+      form.reset()
+      step.value = 1
+    }
+  })
 }
 </script>
-
 <style scoped>
 .reservation-form {
-  max-width: 500px;
-  margin: 20px auto;
-  background: rgba(211, 177, 115, 0.99);
-  border-radius: 15px;
+  max-width: 600px;
+  margin: auto;
+  background: #f3f3f3;
   padding: 20px;
+  border-radius: 12px;
 }
-label {
-  font-weight: 600;
+
+.steps {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+}
+
+.step {
+  width: 35px;
+  height: 35px;
+  border-radius: 50%;
+  background: #ccc;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+}
+
+.step.active {
+  background: #0d6efd;
+  color: white;
 }
 </style>

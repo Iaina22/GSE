@@ -15,8 +15,8 @@ return new class extends Migration
         $table->id();
         $table->string('nom');
         $table->string('email');
-        $table->string('cin')->nullable();
         $table->string('telephone')->nullable();
+        $table->string('np');
         $table->date('date');
         $table->time('heure_debut');
         $table->time('heure_fin');

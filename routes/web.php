@@ -69,12 +69,14 @@ Route::prefix('offre')->group(function () {
 });
 
 
+Route::resource('reservations', ReservationController::class);
 
 Route::get('/materiel', fn() => Inertia::render('materiel'));
-
+Route::get('/reservation/show/{id}', [ReservationController::class, 'show'])->name('reservation.show');
 Route::get('/reservations', [ReservationController::class, 'index'])->name('reservations.index');
 Route::get('/reservations/create', [ReservationController::class, 'create'])->name('reservations.create');
 Route::post('/reservations', [ReservationController::class, 'store'])->name('reservations.store');
 Route::get('/reservations/{reservations}/edit', [ReservationController::class, 'edit'])->name('reservations.edit');
 Route::put('/reservations/{reservations}', [ReservationController::class, 'update'])->name('reservations.update');
 Route::delete('/reservations/{reservations}', [ReservationController::class, 'destroy'])->name('reservations.destroy');
+
