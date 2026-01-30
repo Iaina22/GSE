@@ -22,7 +22,6 @@
         </div>
       </div>
 
-      <!-- CIN -->
       <div class="col-md-6 mb-3">
         <label>CIN</label>
         <input v-model="form.cin" class="form-control" />
@@ -31,7 +30,7 @@
         </div>
       </div>
 
-      <!-- Téléphone -->
+    
       <div class="col-md-12 mb-3">
         <label>Téléphone</label>
         <input v-model="form.telephone" class="form-control" />
@@ -103,10 +102,10 @@ const props = defineProps({
 
 
 const form = useForm({
-  nom: props.reservation?.nom || props.inscription?.nom || '',
-  email: props.reservation?.email || props.inscription?.email || '',
-  cin: props.reservation?.cin || props.inscription?.cin || '',
-  telephone: props.reservation?.telephone || props.inscription?.telephone || '',
+  nom: props.user.nom || props.inscription?.nom || '',
+  email: props.user.email || props.inscription?.email || '',
+  cin: props.user.cin || props.inscription?.cin || '',
+  telephone: props.user.telephone || props.inscription?.telephone || '',
   date: props.reservation?.date || '',
   heure_debut: props.reservation?.heure_debut || '',
   heure_fin: props.reservation?.heure_fin || '',

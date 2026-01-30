@@ -17,9 +17,9 @@ class ReservationController extends Controller
         ]);
     }
 
-    public function create()
+    public function create($id)
     {
-          $inscription = Inscription::first(); 
+          $inscription = Inscription::id(); 
 
     return Inertia::render('reservations/create', [
         'reservation' => null,

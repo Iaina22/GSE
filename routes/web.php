@@ -17,19 +17,14 @@ Route::get('/', function () {
 
 
 Route::get('/vitrine', fn() => Inertia::render('vitrine'));
-// Route::get('/inscrire', fn() => Inertia::render('inscriptions/create'));
 Route::resource('inscriptions', InscriptionController::class);
 
 
-// Page inscription
-// Route::get('/inscriptions/create', [InscriptionController::class, 'create'])->name('inscriptions.create');
-// Route::post('/inscriptions', [InscriptionController::class, 'store'])->name('inscriptions.store');
 Route::resource('inscriptions', InscriptionController::class);
 
 
 Route::get('/inscriptions/{id}/edit', [InscriptionController::class, 'edit'])->name('inscriptions.edit');
 Route::put('/inscriptions/{id}/edit', [InscriptionController::class, 'update'])->name('inscriptions.update');
-Route::delete('/inscriptions/{id}', [InscriptionController::class, 'destroy'])->name('inscriptions.destroy');
 // Login page
 Route::get('/conexion', function () {
    return Inertia::render('conexion/login');
@@ -38,22 +33,27 @@ Route::post('/conexion', function () {
    return Inertia::render('inscriptions/show');
 })->name('login.post');
 
-Route::get('/inscription/show/{id}', [InscriptionController::class, 'show'])
-    ->name('inscription.show');
-    Route::get('/inscriptions/{id}', [InscriptionController::class, 'show'])
-    ->name('inscriptions.show');
+Route::get('/inscription/show/{id}', [InscriptionController::class, 'show'])->name('inscription.show');
+Route::get('/inscriptions/{id}', [InscriptionController::class, 'show'])
+->name('inscriptions.show');
 Route::get('/inscriptions/{id}/edit', [InscriptionController::class, 'edit'])->name('inscriptions.edit');
 Route::put('/inscriptions/{id}', [InscriptionController::class, 'update'])->name('inscriptions.update');
-Route::delete('/inscriptions/{id}', [InscriptionController::class, 'destroy'])->name('inscriptions.destroy');
-
+Route::delete('/inscriptions/{id}', [InscriptionController::class, 'destroy'])
+    ->name('inscriptions.destroy');
 
 Route::post('/login', [AuthController::class, 'login'])
     ->name('login.post');
 Route::get('/user/{id}', function ($id) {
     return Inertia::render('inscriptions/show', [
-        'inscription' => Inscription::findOrFail($id)
+        'inscription' => Inscription::findOrFail($id),
     ]);
 })->name('user.show');
+
+// logout
+Route::post('/logout', [ConnexionController::class, 'logout'])->name('logout');
+
+
+
 Route::prefix('salle')->group(function () {
     Route::get('/mariage', fn() => Inertia::render('salle/mariage'));
     Route::get('/fiancaille', fn() => Inertia::render('salle/fiancaille'));
@@ -70,19 +70,7 @@ Route::prefix('offre')->group(function () {
 
 
 
-// Route::get('/reservations/create', function () {
-//     return Inertia::render('Reservations/Create');
-// })->name('reservations.create');
-
-
 Route::get('/materiel', fn() => Inertia::render('materiel'));
-Route::get('/user', fn() => Inertia::render('user'));
-
-// Route::get('/materiel', fn() => Inertia::render('materiel'));
-// Route::get('/reservation', fn() => Inertia::render('reservation'));
-// Route::get('/inscriptions/show', fn() => Inertia::render('inscriptions/show'));
-// Route::get('/inscriptions/show', fn() => Inertia::render('inscriptions/show'));
-
 
 Route::get('/reservations', [ReservationController::class, 'index'])->name('reservations.index');
 Route::get('/reservations/create', [ReservationController::class, 'create'])->name('reservations.create');

@@ -18,7 +18,7 @@
     <div class="carousel-right">
       <h2>{{ images[currentIndex].title }}</h2>
       <p>{{ images[currentIndex].description }}</p>
-      <button type="button" class="btn btn-success" style="width:30%;margin-left:40%;">Secondary</button>
+      <button type="button" class="btn btn-success" style="width:30%;margin-left:40%;">réserver</button>
     </div>
   </div>
   </div>

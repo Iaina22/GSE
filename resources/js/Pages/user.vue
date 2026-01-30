@@ -1,6 +1,6 @@
 <template>
   <Navbar />
-
+<div style="  background: rgba(245, 245, 245, 0.8);">
   <h2 class="text-primary text-center fw-lighter mt-4">
     Bienvenue
   </h2>
@@ -8,20 +8,20 @@
   <div v-if="inscription">
     <div class="actions">
       <Link :href="`/inscriptions/${inscription.id}/edit`" class="btn btn-dark">
-  Modifier
-</Link>
+        Modifier
+      </Link>
 
-
-      <button
-        class="btn btn-danger"
-        @click="deleteInscription(inscription.id)"
-      >
+      <button type="button" class="btn btn-danger" @click="supprimer">
         Supprimer
+      </button>
+
+      <button type="button" class="btn btn-secondary" @click="logout">
+        Déconnexion
       </button>
     </div>
 
     <div class="profile-card">
-      <h1 style="color:blue; margin-top:-5%; margin-left:30%;">BIENVENUE !</h1>
+      <h1 style="color:blue; text-align:center;">BIENVENUE !</h1>
       <ul class="list-group">
         <li class="list-group-item"><strong>Nom :</strong> {{ inscription.nom }}</li>
         <li class="list-group-item"><strong>Prénom :</strong> {{ inscription.prenom }}</li>
@@ -38,12 +38,30 @@
   <div v-else class="text-center mt-5 text-danger">
     Aucun utilisateur trouvé
   </div>
+
+
+  <div v-if="showLogoutModal" class="modal">
+    <div class="modal-content">
+      <p>Voulez-vous vraiment vous déconnecter ?</p>
+      <div class="actions-modal">
+        <button class="btn btn-secondary" @click="showLogoutModal = false">
+          Non
+        </button>
+        <button class="btn btn-info" @click="confirmLogout">
+          oui
+        </button>
+      </div>
+    </div>
+  </div>
+  </div>
 </template>
 
 <script setup>
 import Navbar from "../Components/Navbar.vue";
 import { Link, router } from "@inertiajs/vue3";
-defineProps({
+import { ref } from "vue";
+
+const props = defineProps({
   inscription: {
     type: Object,
     required: false
@@ -51,11 +69,28 @@ defineProps({
 });
 
 
-const deleteInscription = (id) => {
-  if (!id) return;
-  if (confirm("voulez-vous supprimer vos compte?")) {
-    router.delete(`/inscriptions/${id}`);
+const supprimer = () => {
+  if (!props.inscription) return;
+
+  if (confirm("Voulez-vous vraiment supprimer cette inscription ?")) {
+    router.delete(`/inscriptions/${props.inscription.id}`,  {
+      preserveState: false,
+      onFinish: () => {
+        router.get('/conexion');
+      }
+    });
   }
+};
+
+const showLogoutModal = ref(false);
+
+const logout = () => {
+  showLogoutModal.value = true;
+};
+
+const confirmLogout = () => {
+  showLogoutModal.value = false;
+  router.post('/logout');
 };
 </script>
 
@@ -71,17 +106,53 @@ const deleteInscription = (id) => {
   width: 50%;
   margin: 40px auto;
   text-align: start;
-  background: rgba(245, 245, 245, 0.8);
   padding: 20px;
   border-radius: 10px;
 }
 
 .profile-card h1 {
-  text-align: center;
   margin-bottom: 20px;
 }
 
 .list-group-item {
   font-size: 16px;
+}
+
+.modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+ 
+}
+
+.modal-content {
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  min-width: 300px;
+  text-align: center;
+  animation: slideDown 0.3s ease;
+   width:40%;
+}
+
+@keyframes slideDown {
+  from {
+    transform: translateY(-30px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.actions-modal {
+  display: flex;
+  justify-content: space-around;
+  margin-top: 15px;
 }
 </style>

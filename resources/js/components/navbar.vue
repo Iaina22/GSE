@@ -64,13 +64,13 @@
         <Link href="/reservations/create">Réservation</Link>
       </li>
     
-    <li class="menu-item">
-  <Link href="/user"><img
-      src="../../../public/assets/images/user.jpg"
-      alt=""
-      class="user-image"
-    /> </Link>
+   <li class="menu-item">
+  <Link href="/user/{id}">
+    <img src="../../../public/assets/images/user.jpg" alt="" class="user-image" />
+  </Link>
+
 </li>
+
 </ul>
   </nav>
 </template>
@@ -78,6 +78,14 @@
 <script setup>
 import { ref } from 'vue'
 import { Link } from '@inertiajs/vue3'
+
+const props = defineProps({
+  inscription: {
+    type: Object,
+    required: false
+  }
+});
+
 
 let open = ref('')
 </script>

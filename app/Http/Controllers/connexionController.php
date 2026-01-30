@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Inscription;
 use Illuminate\Support\Facades\Hash;
 
-class LoginController extends Controller
+class connexionController extends Controller
 {
     public function login(Request $request)
     {
@@ -22,8 +22,15 @@ class LoginController extends Controller
                 'prenom' => 'Prenom ou mot de passe incorrect'
             ]);
         }
-
-        // LOGIN OK
         return redirect()->route('user.dashboard');
     }
+    public function logout(Request $request)
+{
+    $request->session()->forget('user_id');
+    $request->session()->invalidate();
+    $request->session()->regenerateToken();
+
+    return redirect()->route('conexion');
+}
+
 }

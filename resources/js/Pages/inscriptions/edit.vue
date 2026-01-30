@@ -58,7 +58,6 @@
     </form>
   </div>
 </template>
-
 <script setup>
 import Navbar from "../../Components/Navbar.vue";
 import { useForm, router } from "@inertiajs/vue3";
@@ -76,14 +75,20 @@ const form = useForm({
   cin: props.inscription.cin,
   telephone: props.inscription.telephone,
   email: props.inscription.email,
+  _method: 'put', 
 });
 
 const submitForm = () => {
-  form.put(`/inscriptions/${props.inscription.id}`, {
+  form.post(`/inscriptions/${props.inscription.id}`, {
     onSuccess: () => {
       router.get(`/inscriptions/${props.inscription.id}`);
     }
   });
 };
+
+
 </script>
+
+
+
 
