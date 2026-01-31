@@ -2,10 +2,13 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Reservation extends Model
 {
+    use HasFactory;
+
     protected $fillable = [
         'nom',
         'email',
@@ -14,6 +17,6 @@ class Reservation extends Model
         'date',
         'heure_debut',
         'heure_fin',
-        'type_evenement'
+        'type_evenement',
     ];
 }

@@ -4,7 +4,6 @@
   <div class="container mt-5">
     <h2 class="text-center text-primary">Fiche de Réservation</h2>
 
-    <!-- PROGRESS -->
     <div class="steps mb-4">
       <span v-for="n in 4" :key="n" :class="['step', { active: step >= n }]">
         {{ n }}
@@ -13,31 +12,25 @@
 
     <form @submit.prevent="submit" class="reservation-form row g-3">
 
-      <!-- STEP 1 -->
+      <!-- STEP 1 : USER INFO -->
       <template v-if="step === 1">
-        <div class="col-md-6">
-          <label>Nom</label>
-          <input v-model="form.nom" class="form-control" />
-        </div>
-
-        <div class="col-md-6">
-          <label>Email</label>
-          <input v-model="form.email" type="email" class="form-control" />
+        <div class="alert alert-info">
+          Nom : <strong>{{ $page.props.auth.user.name }}</strong><br>
+          Email : <strong>{{ $page.props.auth.user.email }}</strong>
         </div>
       </template>
 
       <!-- STEP 2 -->
       <template v-if="step === 2">
-      <div class="col-md-6">
+        <div class="col-md-6">
           <label>Téléphone</label>
           <input v-model="form.telephone" class="form-control" />
         </div>
+
         <div class="col-md-6">
-          <label>Nombre des Personne:</label>
+          <label>Nombre des Personnes</label>
           <input v-model="form.np" class="form-control" />
         </div>
-
-        
       </template>
 
       <!-- STEP 3 -->
@@ -74,46 +67,30 @@
 
       <!-- BUTTONS -->
       <div class="col-12 d-flex justify-content-between mt-4">
-        <button
-          type="button"
-          class="btn btn-secondary"
-          v-if="step > 1"
-          @click="step--"
-        >
+        <button v-if="step > 1" type="button" class="btn btn-secondary" @click="step--">
           Précédent
         </button>
 
-        <button
-          type="button"
-          class="btn btn-primary ms-auto"
-          v-if="step < 4"
-          @click="step++"
-        >
+        <button v-if="step < 4" type="button" class="btn btn-primary ms-auto" @click="step++">
           Suivant
         </button>
 
-        <button
-          v-if="step === 4"
-          class="btn btn-success ms-auto"
-          :disabled="form.processing"
-        >
+        <button v-if="step === 4" class="btn btn-success ms-auto">
           Réserver
         </button>
       </div>
-
     </form>
   </div>
 </template>
+
 <script setup>
 import { ref } from 'vue'
 import { useForm } from '@inertiajs/vue3'
-import Navbar from "../../Components/Navbar.vue";
+import Navbar from '../../Components/Navbar.vue'
 
 const step = ref(1)
 
 const form = useForm({
-  nom: '',
-  email: '',
   np: '',
   telephone: '',
   type_evenement: '',
@@ -123,7 +100,7 @@ const form = useForm({
 })
 
 function submit() {
-  form.post('/reservations', {
+  form.post(route('reservations.store'), {
     onSuccess: () => {
       alert('Réservation envoyée avec succès')
       form.reset()
@@ -132,6 +109,7 @@ function submit() {
   })
 }
 </script>
+
 <style scoped>
 .reservation-form {
   max-width: 600px;
@@ -140,13 +118,11 @@ function submit() {
   padding: 20px;
   border-radius: 12px;
 }
-
 .steps {
   display: flex;
   justify-content: center;
   gap: 10px;
 }
-
 .step {
   width: 35px;
   height: 35px;
@@ -157,7 +133,6 @@ function submit() {
   justify-content: center;
   font-weight: bold;
 }
-
 .step.active {
   background: #0d6efd;
   color: white;

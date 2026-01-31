@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Reservation;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 
 class ReservationController extends Controller
@@ -20,12 +21,9 @@ class ReservationController extends Controller
         return Inertia::render('reservations/create');
     }
 
-
     public function store(Request $request)
     {
         $request->validate([
-            'nom' => 'required|string|max:255',
-            'email' => 'required|email',
             'np' => 'required|string|max:20',
             'telephone' => 'required|string|max:20',
             'date' => 'required|date',
@@ -34,21 +32,29 @@ class ReservationController extends Controller
             'type_evenement' => 'required|string|max:255',
         ]);
 
+        // Vérifier si date déjà réservée
         $dateExiste = Reservation::where('date', $request->date)->exists();
-
         if ($dateExiste) {
             return back()->withErrors([
-                'date' => 'Cette date est déjà réservée par une autre personne.'
-            ])->withInput();
+                'date' => 'Cette date est déjà réservée.'
+            ]);
         }
 
-        Reservation::create($request->all());
+        Reservation::create([
+            'nom'   => Auth::user()->name,   // 👈 user connecté
+            'email' => Auth::user()->email,  // 👈 user connecté
+            'np' => $request->np,
+            'telephone' => $request->telephone,
+            'date' => $request->date,
+            'heure_debut' => $request->heure_debut,
+            'heure_fin' => $request->heure_fin,
+            'type_evenement' => $request->type_evenement,
+        ]);
 
         return redirect()->route('reservations.show')
-            ->with('success', 'Réservation créée avec succès.');
+            ->with('success', 'Réservation enregistrée avec succès');
     }
 
-   
     public function show(Reservation $reservation)
     {
         return Inertia::render('reservations/show', [
@@ -66,8 +72,6 @@ class ReservationController extends Controller
     public function update(Request $request, Reservation $reservation)
     {
         $request->validate([
-            'nom' => 'required|string|max:255',
-            'email' => 'required|email',
             'np' => 'required|string|max:20',
             'telephone' => 'required|string|max:20',
             'date' => 'required|date',
@@ -83,22 +87,29 @@ class ReservationController extends Controller
         if ($dateExiste) {
             return back()->withErrors([
                 'date' => 'Cette date est déjà réservée.'
-            ])->withInput();
+            ]);
         }
 
-        $reservation->update($request->all());
+        $reservation->update([
+            'nom'   => Auth::user()->name,
+            'email' => Auth::user()->email,
+            'np' => $request->np,
+            'telephone' => $request->telephone,
+            'date' => $request->date,
+            'heure_debut' => $request->heure_debut,
+            'heure_fin' => $request->heure_fin,
+            'type_evenement' => $request->type_evenement,
+        ]);
 
-        return redirect()->route('reservations.show')
-            ->with('success', 'Réservation modifiée avec succès.');
+        return redirect()->route('reservations.index')
+            ->with('success', 'Réservation modifiée');
     }
 
-   
     public function destroy(Reservation $reservation)
     {
         $reservation->delete();
 
         return redirect()->route('reservations.index')
-            ->with('success', 'Réservation supprimée avec succès.');
+            ->with('success', 'Réservation supprimée');
     }
-    
 }
