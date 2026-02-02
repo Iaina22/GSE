@@ -21,17 +21,18 @@
       </template>
 
       <!-- STEP 2 -->
-      <template v-if="step === 2">
-        <div class="col-md-6">
-          <label>Téléphone</label>
-          <input v-model="form.telephone" class="form-control" />
-        </div>
+<template v-if="step === 2">
+  <div class="col-md-6">
+    <label>Téléphone</label>
+    <input v-model="form.telephone" class="form-control" required />
+  </div>
 
-        <div class="col-md-6">
-          <label>Nombre des Personnes</label>
-          <input v-model="form.np" class="form-control" />
-        </div>
-      </template>
+  <div class="col-md-6">
+    <label>Nombre des Personnes</label>
+    <input v-model.number="form.np" type="number" min="1" class="form-control" required />
+  </div>
+</template>
+
 
       <!-- STEP 3 -->
       <template v-if="step === 3">
@@ -65,20 +66,27 @@
         </div>
       </template>
 
-      <!-- BUTTONS -->
-      <div class="col-12 d-flex justify-content-between mt-4">
-        <button v-if="step > 1" type="button" class="btn btn-secondary" @click="step--">
-          Précédent
-        </button>
+     <!-- BUTTONS -->
+<div class="col-12 d-flex justify-content-between mt-4">
+  <button v-if="step > 1" type="button" class="btn btn-secondary" @click="step--">
+    Précédent
+  </button>
 
-        <button v-if="step < 4" type="button" class="btn btn-primary ms-auto" @click="step++">
-          Suivant
-        </button>
+  <button
+    v-if="step < 4"
+    type="button"
+    class="btn btn-primary ms-auto"
+    :disabled="!canNext"
+    @click="next"
+  >
+    Suivant
+  </button>
 
-        <button v-if="step === 4" class="btn btn-success ms-auto">
-          Réserver
-        </button>
-      </div>
+  <button v-if="step === 4" class="btn btn-success ms-auto">
+    Réserver
+  </button>
+</div>
+
     </form>
   </div>
 </template>
