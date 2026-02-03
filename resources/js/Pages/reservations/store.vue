@@ -1,6 +1,6 @@
 <template>
   <Navbar />
-<div style="margin-top:10%;">
+
   <div class="container mt-5">
     <h2 class="text-center text-primary">Fiche de Réservation</h2>
 
@@ -22,6 +22,10 @@
         <div class="col-md-12 mt-2">
           <label>Email</label>
           <input v-model="form.email" type="email" class="form-control" />
+        </div>
+
+        <div v-if="errorStep1" class="alert alert-danger mt-3">
+          Nom ou email non valide
         </div>
       </template>
 
@@ -72,14 +76,14 @@
 
       <!-- BUTTONS -->
       <div class="col-12 d-flex justify-content-between mt-4">
-        <button v-if="step > 1" type="button" class="btn btn-dark" @click="step--">
+        <button v-if="step > 1" type="button" class="btn btn-secondary" @click="step--">
           Précédent
         </button>
 
         <button
           v-if="step < 4"
           type="button"
-          class="btn btn-info ms-auto"
+          class="btn btn-primary ms-auto"
           :disabled="!canNext"
           @click="next"
         >
@@ -92,7 +96,6 @@
       </div>
     </form>
   </div>
-    </div>
 </template>
 
 <script setup>
@@ -137,11 +140,20 @@ function next() {
 }
 
 function submit() {
+  // Hamarina Step 1 fotsiny
+  errorStep1.value = !(form.nom.trim() && form.email.trim())
+  if (errorStep1.value) {
+    step.value = 1
+    return
+  }
+
+  // Mampiasa URL mivantana Laravel POST
   form.post('/reservations', {
     onSuccess: () => {
       alert('Réservation envoyée avec succès')
       form.reset()
       step.value = 1
+      errorStep1.value = false
     }
   })
 }
@@ -151,7 +163,7 @@ function submit() {
 .reservation-form {
   max-width: 600px;
   margin: auto;
-  background: #a3a0a0;
+  background: #f3f3f3;
   padding: 20px;
   border-radius: 12px;
 }
@@ -174,7 +186,7 @@ function submit() {
 }
 
 .step.active {
-  background: #690dfd;
+  background: #0d6efd;
   color: white;
 }
 </style>

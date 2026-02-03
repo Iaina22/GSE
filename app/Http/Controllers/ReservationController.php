@@ -1,43 +1,78 @@
 <?php
-
 namespace App\Http\Controllers;
 
 use App\Models\Reservation;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Inertia\Inertia; 
+use Inertia\Inertia;
+
 class ReservationController extends Controller
 {
-    
+    // Lisitry ny reservation rehetra
+    public function index()
+    {
+        $reservations = Reservation::latest()->get();
+        return Inertia::render('reservations/index', compact('reservations'));
+    }
+
+    // Formulaire hanampiana reservation vaovao
     public function create()
     {
         return Inertia::render('reservations/create');
     }
 
-
+    // Mitahiry reservation vaovao
     public function store(Request $request)
     {
         $request->validate([
-            'np' => 'required|integer|min:1',
+            'nom' => 'required|string',
+            'email' => 'required|email',
             'telephone' => 'required|string',
+            'np' => 'required|integer|min:1',
             'type_evenement' => 'required|string',
             'date' => 'required|date',
             'heure_debut' => 'required',
             'heure_fin' => 'required',
         ]);
 
-        Reservation::create([
-            'user_id' => Auth::id(),
-            'nom' => Auth::user()->name,
-            'email' => Auth::user()->email,
-            'np' => $request->np,
-            'telephone' => $request->telephone,
-            'type_evenement' => $request->type_evenement,
-            'date' => $request->date,
-            'heure_debut' => $request->heure_debut,
-            'heure_fin' => $request->heure_fin,
-        ]);
-
-        return redirect()->back()->with('success', 'Réservation enregistrée');
+        $reservation = Reservation::create($request->all());
+        return redirect()->route('reservations.show', $reservation->id)
+                         ->with('success', 'Réservation créée avec succès');
     }
+
+    
+    public function show($id)
+    {
+        $reservation = Reservation::findOrFail($id);
+
+        return Inertia::render('reservations/show', [
+            'reservation' => $reservation
+        ]);
+    }
+
+    public function edit(Reservation $reservation)
+    {
+        return Inertia::render('reservations/edit', [
+            'reservation' => $reservation
+        ]);
+    }
+
+
+public function update(Request $request, Reservation $reservation)
+{
+    $reservation->update($request->all());
+    return Inertia::render('reservations/show', [
+        'reservation' => $reservation
+    ]);
+}
+
+public function destroy(Reservation $reservation)
+{
+    $reservation->delete();
+
+    return Inertia::render('conexion/login', [
+        'reservations' => Reservation::all(),
+        'message' => 'Réservation supprimée avec succès',
+    ]);
+}
+
 }

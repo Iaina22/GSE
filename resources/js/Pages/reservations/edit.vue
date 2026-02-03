@@ -1,127 +1,123 @@
 <template>
-  <Navbar />
+  <div style="padding-top: 60px;">
+    <Navbar />
 
-  <div class="container mt-5">
-    <h3 class="text-center text-primary mb-4">
-      Modifier la Réservation
-    </h3>
+    <div class="container  pt-5">
+      <h2 class="text-center text-primary mb-4">Modification de Réservation</h2>
 
-    <form @submit.prevent="submit" class="reservation-form row g-3">
-
-      <div class="col-md-6">
-        <label>Nom</label>
-        <input v-model="form.nom" class="form-control" />
-        <div v-if="form.errors.nom" class="text-danger">
-          {{ form.errors.nom }}
+      <form @submit.prevent="submitForm" class="reservation-form row g-3">
+        <div class="col-md-12">
+          <label>Nom</label>
+          <input v-model="form.nom" class="form-control" required />
         </div>
-      </div>
 
-      <div class="col-md-6">
-        <label>Email</label>
-        <input v-model="form.email" type="email" class="form-control" />
-        <div v-if="form.errors.email" class="text-danger">
-          {{ form.errors.email }}
+        <div class="col-md-12 mt-2">
+          <label>Email</label>
+          <input v-model="form.email" type="email" class="form-control" required />
         </div>
-      </div>
 
-      <div class="col-md-6">
-        <label>NP</label>
-        <input v-model="form.np" class="form-control" />
-        <div v-if="form.errors.np" class="text-danger">
-          {{ form.errors.np }}
+        <div class="col-md-6 mt-2">
+          <label>Téléphone</label>
+          <input v-model="form.telephone" class="form-control" required />
         </div>
-      </div>
 
-      <div class="col-md-6">
-        <label>Téléphone</label>
-        <input v-model="form.telephone" class="form-control" />
-        <div v-if="form.errors.telephone" class="text-danger">
-          {{ form.errors.telephone }}
+        <div class="col-md-6 mt-2">
+          <label>Nombre des Personnes</label>
+          <input v-model.number="form.np" type="number" min="1" class="form-control" required />
         </div>
-      </div>
 
-      <div class="col-md-6">
-        <label>Événement</label>
-        <select v-model="form.type_evenement" class="form-select">
-          <option disabled value="">Choisir...</option>
-          <option>MARIAGE</option>
-          <option>FIANCAILLE</option>
-          <option>ANNIVERSAIRE</option>
-          <option>BAPTEME</option>
-          <option>REUNION</option>
-        </select>
-        <div v-if="form.errors.type_evenement" class="text-danger">
-          {{ form.errors.type_evenement }}
+        <div class="col-md-6 mt-2">
+          <label>Événement</label>
+          <select v-model="form.type_evenement" class="form-select" required>
+            <option disabled value="">Choisir...</option>
+            <option>MARIAGE</option>
+            <option>FIANCAILLE</option>
+            <option>ANNIVERSAIRE</option>
+            <option>BAPTEME</option>
+            <option>REUNION</option>
+          </select>
         </div>
-      </div>
 
-      <div class="col-md-6">
-        <label>Date</label>
-        <input v-model="form.date" type="date" class="form-control" />
-        <div v-if="form.errors.date" class="text-danger">
-          {{ form.errors.date }}
+        <div class="col-md-6 mt-2">
+          <label>Date</label>
+          <input v-model="form.date" type="date" class="form-control" required />
         </div>
-      </div>
 
-      <div class="col-md-6">
-        <label>Heure Début</label>
-        <input v-model="form.heure_debut" type="time" class="form-control" />
-        <div v-if="form.errors.heure_debut" class="text-danger">
-          {{ form.errors.heure_debut }}
+        <div class="col-md-6 mt-2">
+          <label>Heure Début</label>
+          <input v-model="form.heure_debut" type="time" class="form-control" required />
         </div>
-      </div>
 
-      <div class="col-md-6">
-        <label>Heure Fin</label>
-        <input v-model="form.heure_fin" type="time" class="form-control" />
-        <div v-if="form.errors.heure_fin" class="text-danger">
-          {{ form.errors.heure_fin }}
+        <div class="col-md-6 mt-2">
+          <label>Heure Fin</label>
+          <input v-model="form.heure_fin" type="time" class="form-control" required />
         </div>
-      </div>
 
-      <div class="col-12 text-center mt-4">
-        <button class="btn btn-success w-50" :disabled="form.processing">
-          Mettre à jour
-        </button>
-      </div>
+        <div class="col-12 mt-4">
+          <button type="submit" class="btn btn-success w-100" :disabled="updating">
+            <span v-if="updating" class="spinner-border spinner-border-sm me-2" role="status"></span>
+            {{ updating ? 'Mise à jour...' : 'Mettre à jour' }}
+          </button>
+        </div>
 
-    </form>
+        <div v-if="errorMessage" class="alert alert-danger mt-3">{{ errorMessage }}</div>
+      </form>
+    </div>
   </div>
 </template>
 
 <script setup>
-import { useForm } from '@inertiajs/vue3'
-import Navbar from "../../Components/Navbar.vue";
+import { reactive, ref } from 'vue'
+import { useForm, router } from '@inertiajs/vue3'
+import Navbar from '../../Components/Navbar.vue'
+ 
 
 const props = defineProps({
   reservation: Object
 })
 
 const form = useForm({
-  nom: props.reservation.nom,
-  email: props.reservation.email,
-  np: props.reservation.np,
-  telephone: props.reservation.telephone,
-  date: props.reservation.date,
-  heure_debut: props.reservation.heure_debut,
-  heure_fin: props.reservation.heure_fin,
-  type_evenement: props.reservation.type_evenement,
+  ...props.reservation,
+  _method: 'put' 
 })
 
-function submit() {
-  form.put(`/reservations/${props.reservation.id}`)
+const updating = ref(false)
+const errorMessage = ref('')
+
+const submitForm = () => {
+  updating.value = true
+  errorMessage.value = ''
+
+  form.post(`/reservations/${props.reservation.id}`, {
+    preserveScroll: true, 
+    onSuccess: () => {
+      updating.value = false
+
+      router.get(`/reservations/${props.reservation.id}`, { preserveState: true })
+    },
+    onError: (errors) => {
+      updating.value = false
+      errorMessage.value = errors?.message || 'Erreur lors de la mise à jour'
+    }
+  })
 }
 </script>
 
 <style scoped>
 .reservation-form {
-  max-width: 650px;
+  max-width: 600px;
   margin: auto;
-  background: #f4f4f4;
   padding: 25px;
+  background: #296bada9;
   border-radius: 12px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
 }
-label {
-  font-weight: 600;
+
+.fixed-top {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1030;
 }
 </style>

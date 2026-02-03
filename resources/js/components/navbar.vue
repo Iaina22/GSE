@@ -65,7 +65,7 @@
       </li>
     
    <li class="menu-item">
-  <Link href="/user/{id}">
+  <Link href="/inscriptions/{id}">
     <img src="../../../public/assets/images/user.jpg" alt="" class="user-image" />
   </Link>
 

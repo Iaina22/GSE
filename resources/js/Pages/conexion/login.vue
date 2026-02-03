@@ -70,10 +70,10 @@ const login = () => {
 .login-box {
   background: rgba(0, 0, 0, 0.7);
   padding: 50px;
-  width: 350px;
+  width: 40%;
   border-radius: 10px;
   color: white;
-  margin-left:35%;
+  margin-left:30%;
 }
 
 

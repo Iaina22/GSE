@@ -1,5 +1,6 @@
 <template>
-  <div :style="bgStyle" class="min-vh-100 d-flex flex-column align-items-center pt-5">
+<div margin-top:10%;>
+  <div :style="bgStyle ;" class="min-vh-100 d-flex flex-column align-items-center pt-5">
     <div style="margin-left:-30%;">
       <h1 style="color:blue; font-size:300%;margin-left:-20%">GSE</h1>
       <h3 class="text fs-2 mb-4" style="color:black;">Veuillez saisir vos informations</h3>
@@ -87,19 +88,19 @@
 
     </form>
   </div>
+    </div>
 </template>
 
 <script setup>
 import { reactive, ref } from 'vue'
 import { useForm, router } from '@inertiajs/vue3'
 
-// Formulaire InertiaJS
+
 const form = useForm({
   nom: '', prenom: '', adresse: '', age: '', sexe: '',
   cin: '', telephone: '', email: '', mots_de_passe: '', mots_de_passe_confirmation: ''
 })
 
-// Validation frontend
 const errors = reactive({})
 
 function validate() {

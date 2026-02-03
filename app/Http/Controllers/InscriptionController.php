@@ -51,13 +51,6 @@ public function show($id)
     ]);
 }
 
-   
-    // public function show(Inscription $inscription)
-    // {
-    //     return Inertia::render('inscriptions/show', [
-    //         'inscription' => $inscription
-    //     ]);
-    // }
 
   public function edit($id)
     {
