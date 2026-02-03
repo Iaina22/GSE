@@ -5,9 +5,16 @@ namespace App\Http\Controllers;
 use App\Models\Reservation;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-
+use Inertia\Inertia; 
 class ReservationController extends Controller
 {
+    
+    public function create()
+    {
+        return Inertia::render('reservations/create');
+    }
+
+
     public function store(Request $request)
     {
         $request->validate([

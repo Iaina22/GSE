@@ -14,31 +14,45 @@
 
       <!-- STEP 1 : USER INFO -->
       <template v-if="step === 1">
-        <div class="alert alert-info">
-          Nom : <strong>{{ $page.props.auth.user.name }}</strong><br>
-          Email : <strong>{{ $page.props.auth.user.email }}</strong>
+        <div v-if="user">
+          <div class="col-md-12">
+            <label>Nom</label>
+            <input v-model="form.nom" class="form-control" />
+          </div>
+
+          <div class="col-md-12 mt-2">
+            <label>Email</label>
+            <input v-model="form.email" type="email" class="form-control" />
+          </div>
+
+          <div v-if="errorStep1" class="alert alert-danger mt-3">
+            Nom ou email non valide
+          </div>
+        </div>
+
+        <div v-else class="alert alert-warning">
+          Vous devez être connecté
         </div>
       </template>
 
-      <!-- STEP 2 -->
-<template v-if="step === 2">
-  <div class="col-md-6">
-    <label>Téléphone</label>
-    <input v-model="form.telephone" class="form-control" required />
-  </div>
+      <!-- STEP 2 : CONTACT INFO -->
+      <template v-if="step === 2">
+        <div class="col-md-6">
+          <label>Téléphone</label>
+          <input v-model="form.telephone" class="form-control" required />
+        </div>
 
-  <div class="col-md-6">
-    <label>Nombre des Personnes</label>
-    <input v-model.number="form.np" type="number" min="1" class="form-control" required />
-  </div>
-</template>
+        <div class="col-md-6">
+          <label>Nombre des Personnes</label>
+          <input v-model.number="form.np" type="number" min="1" class="form-control" required />
+        </div>
+      </template>
 
-
-      <!-- STEP 3 -->
+      <!-- STEP 3 : ÉVÉNEMENT -->
       <template v-if="step === 3">
         <div class="col-md-6">
           <label>Événement</label>
-          <select v-model="form.type_evenement" class="form-select">
+          <select v-model="form.type_evenement" class="form-select" required>
             <option disabled value="">Choisir...</option>
             <option>MARIAGE</option>
             <option>FIANCAILLE</option>
@@ -49,56 +63,61 @@
 
         <div class="col-md-6">
           <label>Date</label>
-          <input v-model="form.date" type="date" class="form-control" />
+          <input v-model="form.date" type="date" class="form-control" required />
         </div>
       </template>
 
-      <!-- STEP 4 -->
+      <!-- STEP 4 : HORAIRE -->
       <template v-if="step === 4">
         <div class="col-md-6">
           <label>Heure Début</label>
-          <input v-model="form.heure_debut" type="time" class="form-control" />
+          <input v-model="form.heure_debut" type="time" class="form-control" required />
         </div>
 
         <div class="col-md-6">
           <label>Heure Fin</label>
-          <input v-model="form.heure_fin" type="time" class="form-control" />
+          <input v-model="form.heure_fin" type="time" class="form-control" required />
         </div>
       </template>
 
-     <!-- BUTTONS -->
-<div class="col-12 d-flex justify-content-between mt-4">
-  <button v-if="step > 1" type="button" class="btn btn-secondary" @click="step--">
-    Précédent
-  </button>
+      <!-- BUTTONS -->
+      <div class="col-12 d-flex justify-content-between mt-4">
+        <button v-if="step > 1" type="button" class="btn btn-secondary" @click="step--">
+          Précédent
+        </button>
 
-  <button
-    v-if="step < 4"
-    type="button"
-    class="btn btn-primary ms-auto"
-    :disabled="!canNext"
-    @click="next"
-  >
-    Suivant
-  </button>
+        <button
+          v-if="step < 4"
+          type="button"
+          class="btn btn-primary ms-auto"
+          :disabled="!canNext"
+          @click="next"
+        >
+          Suivant
+        </button>
 
-  <button v-if="step === 4" class="btn btn-success ms-auto">
-    Réserver
-  </button>
-</div>
-
+        <button v-if="step === 4" type="submit" class="btn btn-success ms-auto">
+          Réserver
+        </button>
+      </div>
     </form>
   </div>
 </template>
 
 <script setup>
-import { ref } from 'vue'
-import { useForm } from '@inertiajs/vue3'
+import { ref, computed } from 'vue'
+import { useForm, usePage } from '@inertiajs/vue3'
 import Navbar from '../../Components/Navbar.vue'
 
+const page = usePage()
+const user = page.props.auth?.user
+
 const step = ref(1)
+const errorStep1 = ref(false)
 
 const form = useForm({
+  nom: '',
+  email: '',
   np: '',
   telephone: '',
   type_evenement: '',
@@ -106,6 +125,32 @@ const form = useForm({
   heure_debut: '',
   heure_fin: ''
 })
+
+const canNext = computed(() => {
+  // STEP 1 : validation nom + email
+  if (step.value === 1) {
+    if (!user) return false
+
+    const nomOk = form.nom === user.name
+    const emailOk = form.email === user.email
+
+    errorStep1.value = !(nomOk && emailOk)
+    return nomOk && emailOk
+  }
+
+  if (step.value === 2) return form.telephone && form.np
+  if (step.value === 3) return form.type_evenement && form.date
+  if (step.value === 4) return form.heure_debut && form.heure_fin
+
+  return false
+})
+
+function next() {
+  if (canNext.value) {
+    errorStep1.value = false
+    step.value++
+  }
+}
 
 function submit() {
   form.post(route('reservations.store'), {
